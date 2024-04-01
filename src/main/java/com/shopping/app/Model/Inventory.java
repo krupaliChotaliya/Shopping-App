@@ -9,18 +9,18 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="product")
-public class Product {
+@Table(name="inventory")
+public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "productname")
+    @Column(name = "productName")
     private String name;
 
-    @Column(name = "quantity")
-    private String quantity;
+    @Column(name = "totalQuantity")
+    private String totalQuantity;
 
     @Column(name = "availableQuantity")
     private String availableQuantity;

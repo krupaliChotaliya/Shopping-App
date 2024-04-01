@@ -1,12 +1,13 @@
 package com.shopping.app.Service;
 
 import com.shopping.app.Model.Coupon;
+import com.shopping.app.Model.Payment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public interface CouponService {
+public interface PaymentService {
 
-    List<Coupon> getAllCoupon();
+    Payment makepayment(int userId, int orderID,int amount);
 }

@@ -2,6 +2,7 @@ package com.shopping.app.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 
@@ -11,28 +12,27 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="order")
+@Table(name="orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "transactionId")
-    private String transactionId;
-
-    @Column(name = "status")
-    private String status;
-
     @Column(name = "amount")
     private String amount;
 
+    @Column(name = "quantity")
+    private int quantity;
+
     @ManyToOne
+    @JoinColumn(name = "userId")
     private User user;
 
-    @Column(name = "productId")
-    private int productId;
+    @ManyToOne
+    @JoinColumn(name = "couponCode")
+    private Coupon coupon;
 
-    @Column(name = "date")
-    private LocalDate date;
+    @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
+    private LocalDate date = LocalDate.now();
 }
