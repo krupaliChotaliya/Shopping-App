@@ -3,19 +3,28 @@ package com.shopping.app.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Builder
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="user")
+@Table(name="users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int userId;
 
-    @Column(name = "username")
-    private String name;
+    @Column(name = "userName",nullable = false)
+    private String userName;
+
+    @Column(name = "password",nullable = false)
+    private String password;
+
+    @Column(name = "email",nullable = false,unique = true)
+    private String email;
 }

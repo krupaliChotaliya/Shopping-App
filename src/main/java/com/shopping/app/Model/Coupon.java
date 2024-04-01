@@ -13,13 +13,10 @@ import lombok.*;
 public class Coupon {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String code;
+    @Column(nullable = false,unique = true)
+    private String couponCode;
+    @Column(nullable = false)
     private int discountPercentage;
-    private boolean used;
-    @ManyToOne
-    private User user;
 }
 
 
