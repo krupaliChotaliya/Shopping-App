@@ -4,11 +4,11 @@ import com.shopping.app.Model.Inventory;
 import com.shopping.app.Repository.InventoryRepository;
 import com.shopping.app.Service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,21 +16,43 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/inventory")
 public class InventoryController {
 
     @Autowired
     private InventoryService inventoryService;
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getInventory(){
+    @GetMapping("/inventory")
+    public ResponseEntity<List<Inventory>> getInventory(){
         List<Inventory> inventories=inventoryService.getInventory();
         System.out.println(inventories);
-        Map<String, Object> jsonResponse = new HashMap<>();
-        int ordered= (Integer.parseInt(inventories.get(0).getTotalQuantity())- Integer.parseInt(inventories.get(0).getAvailableQuantity()));
-        jsonResponse.put("ordered",ordered);
-        jsonResponse.put("price", inventories.get(0).getPrice());
-        jsonResponse.put("available", inventories.get(0).getTotalQuantity());
-        return ResponseEntity.ok().body(jsonResponse);
+
+//        Map<String, Object> jsonResponse = new HashMap<>();
+//        int ordered= (Integer.parseInt(inventories.get(0).getTotalQuantity())- Integer.parseInt(inventories.get(0).getAvailableQuantity()));
+//        jsonResponse.put("ordered",ordered);
+//        jsonResponse.put("price", inventories.get(0).getPrice());
+//        jsonResponse.put("available", inventories.get(0).getTotalQuantity());
+        return ResponseEntity.ok().body(inventories);
+    }
+
+//    @GetMapping("/inventory")
+//    public ResponseEntity<Map<String, Object>> getInventory(){
+//        List<Inventory> inventories=inventoryService.getInventory();
+//        System.out.println(inventories);
+//        Map<String, Object> jsonResponse = new HashMap<>();
+//        int ordered= (Integer.parseInt(inventories.get(0).getTotalQuantity())- Integer.parseInt(inventories.get(0).getAvailableQuantity()));
+//        jsonResponse.put("ordered",ordered);
+//        jsonResponse.put("price", inventories.get(0).getPrice());
+//        jsonResponse.put("available", inventories.get(0).getTotalQuantity());
+//        return ResponseEntity.ok().body(jsonResponse);
+//    }
+
+    @PutMapping("/inventory")
+    public ResponseEntity<String> updateAvailableQuantity(@RequestParam String qty, @RequestParam String productName) {
+        int rowsAffected = inventoryService.updateQuantity(qty, productName);
+        if (rowsAffected > 0) {
+            return ResponseEntity.ok("Quantity updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found or quantity not updated");
+        }
     }
 }

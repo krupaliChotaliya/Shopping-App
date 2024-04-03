@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link th:replace="layout :: common-css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .Order_container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        h3 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        td {
+            color: #555;
+        }
+
+        button.m-5 {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            align-content: center;
+        }
+
+        /* Center the button */
+        .button-container {
+            text-align: center;
+            margin-top: 20px; /* Adjust as needed */
+        }
+    </style>
+</head>
+<body>
+<div th:replace="layout::navbar"></div>
+<h3>Your order</h3>
+<table class="Order_container">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Product</th>
+        <th>Amount</th>
+        <th>Quantity</th>
+        <th>Coupon</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+</table>
+<div class="button-container">
+    <button class="m-5" id="payment">Payment</button>
+</div>
+<div th:replace="layout :: common-js"></div>
+<script>
+    let data = sessionStorage.getItem("order");
+    let order = JSON.parse(data);
+
+    let productname = sessionStorage.getItem("Product");
+    // console.log(order)
+
+    // Function to populate table with data
+    function populateTable(data) {
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>1</td>
+            <td>${productname}</td>
+            <td>${data.amount}</td>
+            <td>${data.quantity}</td>
+            <td>${data.coupon.couponCode}</td>
+        `;
+        tableBody.appendChild(row);
+    }
+
+    populateTable(order)
+
+    document.getElementById("payment").addEventListener("click", function () {
+        const userId = order.user.userId;
+        const orderId = order.id
+        const amount = order.amount
+
+        const url = `/payment/${userId}/${orderId}/pay?amount=${amount}`
+        fetch(url, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data != null) {
+                    let availableQty=sessionStorage.getItem("available_Quantity");
+                    let qty = parseInt(availableQty) - parseInt(order.quantity);
+                    const updateUrl = `/inventory?qty=${qty}&productName=${productname}`
+                    fetch(updateUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                        .then(response => {
+                            response.json()
+                        })
+                        .then(data => {
+                            // console.log(data)
+                            alert("Payment Successful!!");
+                        })
+                        .catch(error => {
+                            // console.log(error)
+                        })
+                }
+                // console.log(data);
+            })
+            .catch(error => {
+                alert("Payment Failed!!");
+                // console.error('Exception Occurs while making Payment:', error);
+            });
+    })
+</script>
+</body>
+</html>

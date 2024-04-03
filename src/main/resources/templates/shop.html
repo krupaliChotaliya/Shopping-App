@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+    <link th:replace="layout :: common-css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .product_container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .list-group {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .list-group-item {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .input-group {
+            margin-top: 10px;
+        }
+
+        .input-group button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+
+        .input-group input {
+            width: 50px;
+            text-align: center;
+        }
+
+        button.m-5 {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="layout::navbar"></div>
+<div class="product_container">
+    <h3>Products</h3>
+    <ul id="product-list" class="list-group"></ul>
+    <!--    coupon dropdown-->
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            Apply coupon
+        </button>
+        <ul class="dropdown-menu" id="couponList" aria-labelledby="dropdownMenuButton1"></ul>
+    </div>
+    <button class="m-5" id="checkout">Checkout</button>
+</div>
+<div th:replace="layout :: common-js"></div>
+<script>
+    const userId = sessionStorage.getItem('id');
+    let productname = "";
+    let coupon="";
+    let available_Quantity="";
+
+    // console.log(userId)
+    if (userId == null) {
+        window.location.href = '/';
+    } else {
+        //fetch inventory
+        fetch('/inventory')
+            .then(response => response.json())
+            .then(data => {
+                const productList = document.getElementById('product-list');
+                data.forEach(product => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+
+                    // Product Name
+                    const productNameLi = document.createElement('div');
+                    productNameLi.textContent = `Product: ${product.name}`;
+                    productname = `${product.name}`;
+                    listItem.appendChild(productNameLi);
+
+                    // Price
+                    const priceLi = document.createElement('div');
+                    priceLi.textContent = `Price: ${product.price}`;
+                    listItem.appendChild(priceLi);
+
+                    // Available Quantity
+                    const availableQuantityLi = document.createElement('div');
+                    availableQuantityLi.textContent = `Available Quantity: ${product.availableQuantity}`;
+                    available_Quantity=`${product.availableQuantity}`;
+                    listItem.appendChild(availableQuantityLi);
+
+                    // Select Quantity with Increment and Decrement Buttons
+                    const quantityDiv = document.createElement('div');
+                    quantityDiv.textContent = `Select Quantity You wants to order: `;
+                    quantityDiv.className = 'input-group';
+
+                    const decrementButton = document.createElement('button');
+                    decrementButton.textContent = '-';
+                    decrementButton.className = 'decrement';
+                    quantityDiv.appendChild(decrementButton);
+
+                    const quantityInput = document.createElement('input');
+                    quantityInput.type = 'text';
+                    quantityInput.value = '1'; // Initial quantity
+                    quantityInput.id = 'OrderedQuantity';
+                    quantityDiv.appendChild(quantityInput);
+
+                    const incrementButton = document.createElement('button');
+                    incrementButton.textContent = '+';
+                    incrementButton.className = 'increment';
+                    quantityDiv.appendChild(incrementButton);
+
+                    listItem.appendChild(quantityDiv);
+
+                    productList.appendChild(listItem);
+
+                    let count = 1; // Initial quantity for each product
+
+                    const maxIncrement = 10; // Max quantity available
+
+                    decrementButton.addEventListener('click', () => {
+                        if (count > 1) {
+                            count--;
+                            quantityInput.value = count;
+                        }
+                    });
+
+                    incrementButton.addEventListener('click', () => {
+                        if (count < maxIncrement) {
+                            count++;
+                            quantityInput.value = count;
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                // console.error('Error fetching products:', error);
+            });
+
+        //fetch coupon
+        fetch('/fetchCoupons')
+            .then(response => {
+                return response.json(); // Parse JSON data
+            })
+            .then(data => {
+                // console.log(data);
+                var dataList = document.getElementById("couponList");
+                var dropdownButton = document.getElementById("dropdownMenuButton1");
+                data.forEach(item => {
+                    // console.log(item)
+                    var newItem = document.createElement("li");
+                    var anchorTag = document.createElement("a");
+                    anchorTag.href = "#"; // Set a dummy href
+                    anchorTag.textContent = item.couponCode;
+                    anchorTag.className = "dropdown-item"; // Bootstrap class for dropdown items
+                    newItem.appendChild(anchorTag);
+
+                    // Add event listener to apply coupon when clicked
+                    anchorTag.addEventListener('click', function (event) {
+                        event.preventDefault(); // Prevent default anchor tag behavior
+                        dropdownButton.textContent = `${item.couponCode}`;
+                        // You can add logic here to apply the selected coupon
+                    });
+
+                    dataList.appendChild(newItem);
+                });
+            })
+            .catch(error => {
+                // console.log(error);
+            });
+
+        $('#couponList').on('click', 'a', function() {
+            coupon = $(this).text().trim(); // Trim whitespace from coupon text
+            // console.log("Selected coupon:", coupon); // Debugging output
+            $('#dropdownMenuButton1').text(`Apply coupon: ${coupon}`); // Update button text
+        });
+
+
+        //Checkout (place order)
+        const checkoutBtn = document.getElementById('checkout');
+        checkoutBtn.addEventListener('click', function () {
+            if (coupon){
+                const id = parseInt(userId);
+                const qty = parseInt(document.getElementById("OrderedQuantity").value);
+
+                //api calling
+                const url = `/orders/${id}/order?qty=${qty}&coupon=${coupon}`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // console.log(data);
+                        // alert(data);
+                        sessionStorage.setItem("order", JSON.stringify(data));
+                        sessionStorage.setItem("Product", productname);
+                        sessionStorage.setItem("available_Quantity",available_Quantity)
+                        window.location.href = "/checkout"
+                    })
+                    .catch(error => {
+                        // console.error('Exception Occurs while making Order:', error);
+                    });
+
+            }else {
+                alert("please select coupon")
+            }
+        });
+    }
+</script>
+</body>
+</html>

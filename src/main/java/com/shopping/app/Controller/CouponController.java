@@ -23,12 +23,23 @@ public class CouponController {
     private CouponService couponService;
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getCoupon(){
+    public ResponseEntity<List<Coupon>> getCoupon(){
         List<Coupon> coupons=couponService.getAllCoupon();
-        Map<String, Object> jsonResponse= new HashMap<>();
-        for(Coupon coupon : coupons){
-            jsonResponse.put(coupon.getCouponCode(),coupon.getDiscountPercentage());
-        }
-          return ResponseEntity.ok().body(jsonResponse);
+//        Map<String, Object> jsonResponse= new HashMap<>();
+//        for(Coupon coupon : coupons){
+//            jsonResponse.put(coupon.getCouponCode(),coupon.getDiscountPercentage());
+//        }
+          return ResponseEntity.ok().body(coupons);
     }
+
+//    @GetMapping
+//    public ResponseEntity<Map<String, Object>> getCoupon(){
+//        List<Coupon> coupons=couponService.getAllCoupon();
+//        Map<String, Object> jsonResponse= new HashMap<>();
+//        for(Coupon coupon : coupons){
+//            jsonResponse.put(coupon.getCouponCode(),coupon.getDiscountPercentage());
+//        }
+//        return ResponseEntity.ok().body(jsonResponse);
+//    }
+
 }

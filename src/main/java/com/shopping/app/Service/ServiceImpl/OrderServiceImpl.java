@@ -48,13 +48,13 @@ public class OrderServiceImpl implements OrderService {
 
         List<Inventory>inventoriesService=inventoryService.getInventory();
         // Check if quantity is valid
-        if (Integer.parseInt(inventoriesService.get(0).getTotalQuantity()) > qty) {
+        if (Integer.parseInt(inventoriesService.get(0).getTotalQuantity()) < qty) {
             throw new IllegalArgumentException("Invalid quantity");
         }
         //amount calculation
         List<Inventory> inventories=inventoryRepository.findAll();
         String amount = inventories.get(0).getPrice();
-        int totalAmount = Integer.parseInt(amount);
+        int totalAmount = Integer.parseInt(amount)*qty;
         int discountPercentage = coupon1.getDiscountPercentage();
 
         double discount = (double) discountPercentage / 100.0;
