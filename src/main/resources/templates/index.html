@@ -1,26 +1,63 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <div th:replace="layout :: common-css"></div>
-  <title>Shopping App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:replace="layout :: common-css"/>
+    <title>Shopping App</title>
 </head>
 <body>
-<h1>Registration</h1>
-<div class="snippet-container">
-  <form>
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Email address</label>
-      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-    </div>
-    <div class="mb-3">
-      <label for="exampleInputPassword1" class="form-label">Password</label>
-      <input type="password" class="form-control" id="exampleInputPassword1">
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+<div th:insert="layout::navbar"></div>
+<h1 class="container">Login</h1>
+<div>
+    <form class="container" th:action="@{/login}" id="loginForm" method="post">
+        <div class="mb-3">
+            <label class="form-label">Email address</label>
+            <input type="email" id="email" name="email" class="form-control" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
 <div th:replace="layout :: common-js"></div>
+<script th:inline="javascript">
+    /* Thymeleaf inline JavaScript to handle form submission */
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        var form = this;
+        var formData = new FormData(form);
+
+        fetch(form.action, {
+            method: form.method,
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data === null) {
+                    alert('Email or password is wrong!'); // Show an alert for invalid credentials
+                } else {
+                    alert('Logged in successfully!');
+                    // console.log(data);
+                    // console.log(data.id);// Show success message or perform redirection
+                    sessionStorage.setItem('id', data.userId);
+                    form.reset(); // Reset the form after successful login
+                    window.location.href =/*[[@{/shop}]]*/ '/shop';
+                }
+            })
+            .catch(error => {
+                // console.error('Error:', error);
+                alert('Email or password is wrong!'); // Show an alert for other errors
+            });
+    });
+</script>
 </body>
+
 </html>

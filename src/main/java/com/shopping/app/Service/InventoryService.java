@@ -10,4 +10,6 @@ public interface InventoryService {
 
     List<Inventory> getInventory();
 
+    int updateQuantity(String qty,String productName);
+
 }

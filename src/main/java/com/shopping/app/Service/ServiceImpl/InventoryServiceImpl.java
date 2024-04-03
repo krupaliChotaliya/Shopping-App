@@ -18,4 +18,9 @@ public class InventoryServiceImpl implements InventoryService {
     public List<Inventory> getInventory() {
         return inventoryRepository.findAll();
     }
+
+    @Override
+    public int updateQuantity(String qty,String productName) {
+        return inventoryRepository.updateAvailableQuantity(qty,productName);
+    }
 }
