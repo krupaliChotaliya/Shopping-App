@@ -13,8 +13,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public User login(@RequestParam String email,@RequestParam String password){
-        return userService.login(email,password);
+    public User login(@RequestParam String email, @RequestParam String password) {
+        return userService.login(email, password);
     }
 
 }

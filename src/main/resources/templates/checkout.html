@@ -86,11 +86,14 @@
 </div>
 <div th:replace="layout :: common-js"></div>
 <script>
+    if (sessionStorage.getItem('allowed') !== 'true') {
+        window.location.href = '/';
+    }
+
     let data = sessionStorage.getItem("order");
     let order = JSON.parse(data);
 
     let productname = sessionStorage.getItem("Product");
-    // console.log(order)
 
     // Function to populate table with data
     function populateTable(data) {
@@ -129,7 +132,7 @@
             })
             .then(data => {
                 if (data != null) {
-                    let availableQty=sessionStorage.getItem("available_Quantity");
+                    let availableQty = sessionStorage.getItem("available_Quantity");
                     let qty = parseInt(availableQty) - parseInt(order.quantity);
                     const updateUrl = `/inventory?qty=${qty}&productName=${productname}`
                     fetch(updateUrl, {
@@ -142,18 +145,18 @@
                             response.json()
                         })
                         .then(data => {
-                            // console.log(data)
                             alert("Payment Successful!!");
+                            sessionStorage.setItem('allowed', 'false');
+                            window.location.href = "/shop"
                         })
                         .catch(error => {
-                            // console.log(error)
+                            console.log(error)
                         })
                 }
-                // console.log(data);
             })
             .catch(error => {
                 alert("Payment Failed!!");
-                // console.error('Exception Occurs while making Payment:', error);
+                console.error('Exception Occurs while making Payment:', error);
             });
     })
 </script>
