@@ -38,11 +38,12 @@ This is a simple shopping web application developed using Java and Spring Framew
 ## Setup Instructions
 
 1. Clone the repository: `git clone <repository-url>`
-2. Navigate to the project directory: `cd shopping-web-app`
-3. Set up MySQL database and update database configurations in `application.properties` file.
-4. Build the project using Maven: `mvn clean install`
-5. Run the application: `java -jar target/shopping-web-app.jar`
-6. Access the application in your web browser at `http://localhost:8080`
+2. Download database file from link https://drive.google.com/file/d/1PnGBTf0OZQfekGV-mZehrXss2Uk4QuEs/view?usp=sharing and import into MySQL database
+3. Navigate to the project directory: `cd shopping-web-app`
+4. Set up MySQL database and update database configurations in `application.properties` file.
+5. Build the project using Maven: `mvn clean install`
+6. Run the application: `java -jar target/shopping-web-app.jar`
+7. Access the application in your web browser at `http://localhost:8080`
 
 Feel free to explore and modify the application according to your requirements!
 
