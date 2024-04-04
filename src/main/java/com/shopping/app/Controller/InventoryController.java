@@ -25,26 +25,10 @@ public class InventoryController {
     public ResponseEntity<List<Inventory>> getInventory(){
         List<Inventory> inventories=inventoryService.getInventory();
         System.out.println(inventories);
-
-//        Map<String, Object> jsonResponse = new HashMap<>();
-//        int ordered= (Integer.parseInt(inventories.get(0).getTotalQuantity())- Integer.parseInt(inventories.get(0).getAvailableQuantity()));
-//        jsonResponse.put("ordered",ordered);
-//        jsonResponse.put("price", inventories.get(0).getPrice());
-//        jsonResponse.put("available", inventories.get(0).getTotalQuantity());
         return ResponseEntity.ok().body(inventories);
     }
 
-//    @GetMapping("/inventory")
-//    public ResponseEntity<Map<String, Object>> getInventory(){
-//        List<Inventory> inventories=inventoryService.getInventory();
-//        System.out.println(inventories);
-//        Map<String, Object> jsonResponse = new HashMap<>();
-//        int ordered= (Integer.parseInt(inventories.get(0).getTotalQuantity())- Integer.parseInt(inventories.get(0).getAvailableQuantity()));
-//        jsonResponse.put("ordered",ordered);
-//        jsonResponse.put("price", inventories.get(0).getPrice());
-//        jsonResponse.put("available", inventories.get(0).getTotalQuantity());
-//        return ResponseEntity.ok().body(jsonResponse);
-//    }
+
 
     @PutMapping("/inventory")
     public ResponseEntity<String> updateAvailableQuantity(@RequestParam String qty, @RequestParam String productName) {

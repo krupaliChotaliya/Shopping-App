@@ -24,9 +24,8 @@
 </div>
 <div th:replace="layout :: common-js"></div>
 <script th:inline="javascript">
-    /* Thymeleaf inline JavaScript to handle form submission */
     document.getElementById('loginForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
         var form = this;
         var formData = new FormData(form);
 
@@ -42,22 +41,19 @@
             })
             .then(data => {
                 if (data === null) {
-                    alert('Email or password is wrong!'); // Show an alert for invalid credentials
+                    alert('Email or password is wrong!');
                 } else {
                     alert('Logged in successfully!');
-                    // console.log(data);
-                    // console.log(data.id);// Show success message or perform redirection
                     sessionStorage.setItem('id', data.userId);
-                    form.reset(); // Reset the form after successful login
-                    window.location.href =/*[[@{/shop}]]*/ '/shop';
+                    form.reset();
+                    window.location.href = '/shop';
                 }
             })
             .catch(error => {
-                // console.error('Error:', error);
+                console.log(error)
                 alert('Email or password is wrong!'); // Show an alert for other errors
             });
     });
 </script>
 </body>
-
 </html>
